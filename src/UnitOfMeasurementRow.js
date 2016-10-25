@@ -25,7 +25,7 @@ class UnitOfMeasurementRow extends Component {
             Celsius
           </option>
         </select>
-        <select onChange={this.handleInputTwoChange}>
+        <select onChange={this.handleInputTwoChange.bind(this)}>
           <option value="Kelvin">
             Kelvin
           </option>
