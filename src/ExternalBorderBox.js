@@ -15,11 +15,12 @@ class ExternalBorderBox extends Component {
     };
   }
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.inputOneUnit !== prevState.inputOneUnit) {
-      this.handleInputTwo(this.state.inputTwoValue);
-    } else if (this.state.inputTwoUnit !== prevState.inputTwoUnit) {
+    if(this.state.inputOneUnit !== prevState.inputOneUnit || this.state.inputTwoUnit !== prevState.inputTwoUnit) {
       this.handleInputOne(this.state.inputOneValue);
     }
+    // else if (this.state.inputTwoUnit !== prevState.inputTwoUnit) {
+    //   this.handleInputOne(this.state.inputOneValue);
+    // }
     return true;
   }
 
