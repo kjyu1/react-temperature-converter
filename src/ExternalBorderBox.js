@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import './ExternalBorderBox.css';
-import Title from './Title'
-import UnitOfMeasurementRow from './UnitOfMeasurementRow'
-import InputsRow from './InputsRow'
+import Title from './Title';
+import UnitOfMeasurementRow from './UnitOfMeasurementRow';
+import InputsRow from './InputsRow';
+import { connect } from 'react-redux';
+import { changedInput1, changedInput2, changedMeasurement1, changedMeasurement2 } from './actions';
 
 class ExternalBorderBox extends Component {
   constructor(props) {
