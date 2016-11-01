@@ -1,4 +1,9 @@
-const measurements = (state, action) => {
+const INITIAL_STATE = {
+  inputOneUnit: 'Kelvin',
+  inputTwoUnit: 'Kelvin',
+}
+
+const measurements = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'CHANGED_MEASUREMENT_1':
       return {
@@ -11,10 +16,7 @@ const measurements = (state, action) => {
         inputTwoUnit: action.inputTwoUnit
       }
     default:
-      return {
-        inputOneUnit: 'Kelvin',
-        inputTwoUnit: 'Kelvin',
-      }
+      return state
   }
 }
 

@@ -7,41 +7,51 @@ import { connect } from 'react-redux';
 import { changedInput1, changedInput2, changedMeasurement1, changedMeasurement2 } from './actions';
 
 class ExternalBorderBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputOneUnit: 'Kelvin',
-      inputTwoUnit: 'Kelvin',
-      inputOneValue: 0,
-      inputTwoValue: 0
-    };
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if(this.state.inputOneUnit !== prevState.inputOneUnit || this.state.inputTwoUnit !== prevState.inputTwoUnit) {
-      this.handleInputOne(this.state.inputOneValue);
-    }
-    // else if (this.state.inputTwoUnit !== prevState.inputTwoUnit) {
-    //   this.handleInputOne(this.state.inputOneValue);
-    // }
-    return true;
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     inputOneUnit: 'Kelvin',
+  //     inputTwoUnit: 'Kelvin',
+  //     inputOneValue: 0,
+  //     inputTwoValue: 0
+  //   };
+  // }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if(this.state.inputOneUnit !== prevState.inputOneUnit || this.state.inputTwoUnit !== prevState.inputTwoUnit) {
+  //     this.handleInputOne(this.state.inputOneValue);
+  //   }
+  //   // else if (this.state.inputTwoUnit !== prevState.inputTwoUnit) {
+  //   //   this.handleInputOne(this.state.inputOneValue);
+  //   // }
+  //   return true;
+  // }
 
   changeInputOneUnit(newUnitName) {
-    this.setState({inputOneUnit: newUnitName});
+    console.log(this.props)
+    // this.setState({inputOneUnit: newUnitName});
+    this.props.dispatch(changedMeasurement1(newUnitName));
+    this.props.dispatch(changedInput2(this.convertTheOtherInputTemperature(2, this.props.inputs.inputOneValue, newUnitName)));
   }
 
   changeInputTwoUnit(newUnitName) {
-    this.setState({inputTwoUnit: newUnitName});
+    // this.setState({inputTwoUnit: newUnitName});
+    this.props.dispatch(changedMeasurement2(newUnitName));
+    this.props.dispatch(changedInput2(this.convertTheOtherInputTemperature(2, this.props.inputs.inputOneValue, undefined ,newUnitName)));
   }
 
   handleInputOne(currentTemp) {
     var convertedTemp = this.convertTheOtherInputTemperature(2, currentTemp);
-    this.setState({inputOneValue: currentTemp, inputTwoValue: convertedTemp});
+    // this.setState({inputOneValue: currentTemp, inputTwoValue: convertedTemp});
+    this.props.dispatch(changedInput1(currentTemp));
+    this.props.dispatch(changedInput2(convertedTemp));
   }
 
   handleInputTwo(currentTemp) {
     var convertedTemp = this.convertTheOtherInputTemperature(1, currentTemp);
-    this.setState({inputOneValue: convertedTemp, inputTwoValue: currentTemp});
+    // this.setState({inputOneValue: convertedTemp, inputTwoValue: currentTemp});
+    this.props.dispatch(changedInput1(convertedTemp));
+    this.props.dispatch(changedInput2(currentTemp));
   }
 
   //local functions
@@ -69,15 +79,15 @@ class ExternalBorderBox extends Component {
     return( temp * (9/5) + 32);
   }
 
-  convertTheOtherInputTemperature(desiredInputTemperaturePosition, knownTemperature) {
+  convertTheOtherInputTemperature(desiredInputTemperaturePosition, knownTemperature, inputOneUnit = this.props.measurements.inputOneUnit, inputTwoUnit = this.props.measurements.inputTwoUnit) {
     var pos = desiredInputTemperaturePosition;
     var temp = knownTemperature;
-    if(this.state.inputOneUnit === this.state.inputTwoUnit) {
+    if(inputOneUnit === inputTwoUnit) {
       return knownTemperature;
 
       //Kelvin and ???
-    } else if(this.state.inputOneUnit === 'Kelvin') {
-      if(this.state.inputTwoUnit === 'Fahrenheit') {
+    } else if(inputOneUnit === 'Kelvin') {
+      if(inputTwoUnit === 'Fahrenheit') {
         if(pos === 1) {
           return this.fToK(temp);
         } else {
@@ -92,8 +102,8 @@ class ExternalBorderBox extends Component {
       }
 
       //Fahrenheit and ???
-    } else if(this.state.inputOneUnit === 'Fahrenheit') {
-      if(this.state.inputTwoUnit === 'Kelvin') {
+    } else if(inputOneUnit === 'Fahrenheit') {
+      if(inputTwoUnit === 'Kelvin') {
         if(pos === 1) {
           return this.kToF(temp);
         } else {
@@ -109,7 +119,7 @@ class ExternalBorderBox extends Component {
 
       //Celsius and ???
     } else { //celsius is 1st position
-      if(this.state.inputTwoUnit === 'Fahrenheit') {
+      if(inputTwoUnit === 'Fahrenheit') {
         if(pos === 1) {
           return this.fToC(temp);
         } else {
@@ -131,11 +141,11 @@ class ExternalBorderBox extends Component {
       <div className="Border">
         <Title name="Converter!" />
         <UnitOfMeasurementRow onChangeInputOne={this.changeInputOneUnit.bind(this)} onChangeInputTwo={this.changeInputTwoUnit.bind(this)} />
-        <InputsRow inputOneValue={this.state.inputOneValue} inputTwoValue={this.state.inputTwoValue}
+        <InputsRow inputOneValue={this.props.inputs.inputOneValue} inputTwoValue={this.props.inputs.inputTwoValue}
         onChangeInputOne={this.handleInputOne.bind(this)} onChangeInputTwo={this.handleInputTwo.bind(this)} />
         <div>
           <span>
-            1st input unit: {this.state.inputOneUnit}, 2nd input unit: {this.state.inputTwoUnit}
+            1st input unit: {this.props.measurements.inputOneUnit}, 2nd input unit: {this.props.measurements.inputTwoUnit}
           </span>
         </div>
       </div>
@@ -143,4 +153,9 @@ class ExternalBorderBox extends Component {
   }
 }
 
-export default ExternalBorderBox;
+const mapStateToProps = state => ({
+    inputs: state.inputs,
+    measurements: state.measurements
+})
+
+export default connect(mapStateToProps)(ExternalBorderBox);

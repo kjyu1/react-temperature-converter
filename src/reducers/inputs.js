@@ -1,4 +1,9 @@
-const inputs = (state, action) => {
+const INITIAL_STATE = {
+  inputOneValue: 0,
+  inputTwoValue: 0
+}
+
+const inputs = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'CHANGED_INPUT_1':
       return {
@@ -11,10 +16,7 @@ const inputs = (state, action) => {
         inputTwoValue: action.inputTwoValue
       }
     default:
-      return {
-        inputOneValue: 0,
-        inputTwoValue: 0
-      }
+      return state
   }
 }
 
